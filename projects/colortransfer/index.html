@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>6040 Final: Color Transfer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
+.w3-sidebar {
+  z-index: 3;
+  width: 250px;
+  top: 43px;
+  bottom: 0;
+  height: inherit;
+}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-theme-l1">Color Transfer</a>
+    <a href="#bg" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Background</a>
+    <a href="#prc" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Process</a>
+    <a href="#ex" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Examples</a>
+  </div>
+</div>
+
+
+
+<!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+<div class="w3-main" style="margin-left:250px">
+  <div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+	Connor Patsel<br>
+	CPSC 6040 Final <br>
+	Fall 2018<br>
+      <h1 class="w3-text-teal" id="bg">Background</h1>
+      <p>For this project, I chose to implement the color transfer algorithm proposed by Reinhard, et al. in their paper <i>Color Transfer between Images</i>. The paper describes a method to apply the color statistics of one image (the source) to another image (the destination). The destination image will then take on the appearance of the atmosphere of the source image. A limitation to this approach is that the images must be constructed similarly, i.e. images of vastly different subjects likely will not translate well. The remedy to this is to perform the algorithm on swatches of the image at a time, however this approach is beyond the scope of this project.</p>
+	  <p> Additionally, this project implements a simple image scaling algorithm in order to simplify the transfer between images of differing sizes.</p>
+    </div>
+   
+  </div>
+
+  <div class="w3-row">
+    <div class="w3-twothird w3-container">
+      <h1 class="w3-text-teal" id="prc">Process</h1>
+      <p>The process involved in color transfer between a source and a destination image includes these main steps:
+		 <ul>
+		 <li> Convert from RGB space to LMS space</li>
+		 <li> Convert from LMS space to L&#945&#946 space</li>
+		 <li> Color correct using image color statistics</li>
+		 <li> Convert back to RGB space</li>
+		 </ul>
+		 For this project, RGB values were converted to values from [0,1].
+		 <h3> Scale the Image </h3>
+		 Before doing any of the steps, if the images are not the same size then the destination image is scaled either up or down. To do this, the ratio of how much bigger the source image is to the destination image is used for the value in a simple scaling kernel which is then applied to the destination image before continuing. 
+		 <h3>Convert from RGB to LMS</h3>
+			To convert images from pixels RGB to LMS space Reinhard et al. provide the following matrix multiplication:<br>
+			<img src="img/rgblms.jpg"></img><br>
+			After translating the pixels, they should be converted to logarithmic scale to eliminate skew. This will produce the vector <b>LMS</b>.
+		 <h3>Convert from LMS space to L&#945&#946 space</h3>
+			Once in LMS space the pixels can then be converted to L&#945&#946 space. This can be achieved through the following transformation:<br>
+			<img src="img/labtrans.jpg"></img><br>
+			
+		<h3> Color correct using statistics </h3>
+			Next is to collect statistic information about the images. 
+			<ol>
+			<li>First the mean L&#945&#946 values are found for each image.
+			<li> Using the means, find the standard deviation for each image.
+			<li> Compute the standard deviation scale factor by dividing the source std.dev over the destination's.
+			<li> Subtract the destination's mean from its pixel values
+			<li> Scale this by the scale factor from step 3.
+			<li> Add the mean from the source image to the pixel.
+			</ol>
+		<h3> Convert Back to RGB </h3>
+			Using these two equations: <br>
+			<img src="img/tolms.jpg"></img><br>
+			<img src="img/rgbmat.jpg"></img><br>
+			Each newly adjusted pixel can be converted back into the typical RGB space.
+		
+		 </p>
+    </div>
+    
+  </div>
+
+  <div class="w3-row w3-padding-64">
+    <div class="w3-container">
+      <h1 class="w3-text-teal" id="ex">Examples</h1>
+	 <!--<span style="text-align:left; display:block">Source Image</span> 
+	  <span style="text-align:center; display:block">Destination Image</span>
+	  <span style="text-align:right; display:block"> Result </span>-->
+	  Source Image, 	Destination Image,		Result
+      <p><img src="img/sunset.png"></img><img src="img/sky.png"></img><img src="img/sunsetsky.jpg"></img><br>
+	  <img  width=312 src="img/rainier.jpg"></img><img width=312 src="img/fuji.jpg"></img><img width=312 src="img/fujicloud.jpg"></img><br>
+	  <img  width=312 src="img/monet.jpg"></img><img width=312 src="img/field.jpg"></img><img width=312 src="img/monetstyle.jpg"></img><br>
+	  <img  width=312 src="img/canaletto.jpg"></img><img width=312 src="img/venice.jpg"></img><img width=312 src="img/venezia.jpg"></img><br>
+	  </p>
+    </div>
+    
+  </div>
+
+  
+
+  <footer id="myFooter">
+    
+    <div class="w3-container w3-theme-l1 ">
+      <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+    </div>
+  </footer>
+
+<!-- END MAIN -->
+</div>
+
+<script>
+// Get the Sidebar
+var mySidebar = document.getElementById("mySidebar");
+
+// Get the DIV with overlay effect
+var overlayBg = document.getElementById("myOverlay");
+
+// Toggle between showing and hiding the sidebar, and add overlay effect
+function w3_open() {
+    if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none';
+        overlayBg.style.display = "none";
+    } else {
+        mySidebar.style.display = 'block';
+        overlayBg.style.display = "block";
+    }
+}
+
+// Close the sidebar with the close button
+function w3_close() {
+    mySidebar.style.display = "none";
+    overlayBg.style.display = "none";
+}
+</script>
+
+</body>
+</html>
+
